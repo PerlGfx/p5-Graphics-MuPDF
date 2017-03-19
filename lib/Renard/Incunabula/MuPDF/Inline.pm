@@ -1,4 +1,6 @@
+use Modern::Perl;
 package Renard::Incunabula::MuPDF::Inline;
+# ABSTRACT: MuPDF bindings using Inline::C
 
 use strict;
 use warnings;

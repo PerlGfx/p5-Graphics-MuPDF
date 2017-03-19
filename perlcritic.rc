@@ -1,0 +1,4 @@
+theme = ( core + pbp + security + maintenance ) * bugs
+include = CodeLayout::ProhibitSpaceIndentation CodeLayout::ProhibitTrailingWhitespace CodeLayout::RequireConsistentNewlines CodeLayout::TabIndentSpaceAlign
+
+# vim: ft=dosini
