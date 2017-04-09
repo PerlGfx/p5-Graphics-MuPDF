@@ -1,0 +1,4 @@
+TYPEMAP
+
+fz_context*  T_PTROBJ
+fz_document* T_PTROBJ
