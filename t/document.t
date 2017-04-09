@@ -23,6 +23,26 @@ subtest "Open document" => sub {
 	lives_ok {
 		$doc = Renard::Incunabula::MuPDF::Inline::open_document($ctx, $pdf_ref_path);
 	} "document was opened";
+
+	my $num_pages = Renard::Incunabula::MuPDF::Inline::count_pages( $ctx, $doc );
+
+	is( $num_pages, 1310, 'correct number of pages in document' );
+
+	my $matrix = Renard::Incunabula::MuPDF::Inline::new_matrix();
+	Renard::Incunabula::MuPDF::Inline::set_as_identity_matrix($matrix);
+	use DDP; p $matrix;
+
+	my $pixmap = Renard::Incunabula::MuPDF::Inline::render($ctx, $doc, 1, $matrix);
+	use DDP; p $pixmap;
+
+
+	use Modern::Perl;
+	say "Width: "  . Renard::Incunabula::MuPDF::Inline::pixmap_width( $ctx, $pixmap );
+	say "Height: " . Renard::Incunabula::MuPDF::Inline::pixmap_height( $ctx, $pixmap );
+
+	my $samples = Renard::Incunabula::MuPDF::Inline::pixmap_samples_imager( $ctx, $pixmap );
+	$samples->write( file => "inline-mupdf.png" );
+	use DDP; p $samples;
 };
 
 done_testing;

@@ -6,13 +6,15 @@ use strict;
 use warnings;
 
 use Alien::MuPDF;
+use Imager;
 use Dir::Self;
 use File::Spec;
 
 use Inline C => DATA =>
 	enable => autowrap =>
 	typemaps => File::Spec->catfile(__DIR__, 'typemaps'),
-	with => [ qw(Alien::MuPDF) ];
+	filters => 'Preprocess',
+	with => [ qw(Alien::MuPDF Imager) ];
 
 1;
 
@@ -43,21 +45,6 @@ fz_context* context() {
 	return ctx;
 }
 
-/* fz_document *fz_open_document(fz_context *ctx, const char *filename); */
-fz_document* open_document( fz_context* ctx, const char* filename ) {
-	fz_document* ret;
-
-	fz_try( ctx ) {
-		ret = fz_open_document( ctx, filename );
-	} fz_catch( ctx ) {
-		ret = NULL;
-		croak("%s: %s", __FUNCTION__, fz_caught_message(ctx));
-	}
-
-	return ret;
-}
-
-/*
 #define MUPDF_WRAP( \
 	wrapper_fn_name, return_type, failure_value, \
 	real_fn_call, \
@@ -66,13 +53,72 @@ fz_document* open_document( fz_context* ctx, const char* filename ) {
 	\
 	return_type wrapper_fn_name( fz_context *ctx, ##__VA_ARGS__ ) { \
 		return_type ret; \
-		fz_try( ctx ) { real_fn_call; } \
-		fz_catch( ctx ) { ret = failure_value; } \
+		\
+		fz_try( ctx ) { \
+			real_fn_call; \
+		} fz_catch( ctx ) { \
+			ret = failure_value; \
+			croak("%s: %s", __FUNCTION__, fz_caught_message(ctx)); \
+		} \
+		\
 		return ret; \
 	}
 
+/* fz_document *fz_open_document(fz_context *ctx, const char *filename); */
 MUPDF_WRAP(open_document, fz_document*, NULL,
-	ret = fz_open_document(ctx, filename),
+	ret = fz_open_document( ctx, filename ),
 	const char* filename )
 
-*/
+/* int fz_count_pages(fz_context *ctx, fz_document *doc); */
+MUPDF_WRAP(count_pages, int, -1,
+	ret = fz_count_pages( ctx, doc ),
+	fz_document *doc)
+
+fz_matrix* new_matrix() {
+	fz_matrix* ctm;
+	Newx(ctm, 1, fz_matrix);
+}
+
+fz_matrix* set_as_identity_matrix(fz_matrix* ctm) {
+	return fz_copy_matrix(ctm, &fz_identity);
+}
+
+/* fz_pixmap *fz_new_pixmap_from_page_number(
+	fz_context *ctx,
+	fz_document *doc,
+	int number,
+	const fz_matrix *ctm,
+	fz_colorspace *cs,
+	int alpha); */
+MUPDF_WRAP(render, fz_pixmap*, NULL,
+	ret = fz_new_pixmap_from_page_number( ctx, doc, number, ctm, fz_device_rgb(ctx), 0 ),
+	fz_document *doc,
+	int number,
+	fz_matrix *ctm )
+
+
+/* unsigned char *fz_pixmap_samples(fz_context *ctx, fz_pixmap *pix); */
+MUPDF_WRAP(pixmap_samples_imager, Imager, NULL,
+	Imager img = i_img_8_new(pix->w, pix->h, pix->n);
+	for( int line = 0; line < pix->h; line++ ) {
+		i_psamp(img, 0, pix->w, line,
+			pix->samples + (pix->n*line*pix->w),
+			NULL,
+			pix->n);
+	}
+	ret = img;
+	/*Imager ret = i_img_8_new(pix->w, pix->h, pix->n);
+	printf("%d:%d:%d:%d\n", ret->xsize, ret->ysize, pix->n, ret->bytes);
+	ret->idata = pix->samples*/
+	,
+	fz_pixmap *pix )
+
+/* int fz_pixmap_width(fz_context *ctx, fz_pixmap *pix); */
+MUPDF_WRAP(pixmap_width, int, -1,
+	ret = fz_pixmap_width(ctx, pix),
+	fz_pixmap *pix )
+
+/* int fz_pixmap_height(fz_context *ctx, fz_pixmap *pix); */
+MUPDF_WRAP(pixmap_height, int, -1,
+	ret = fz_pixmap_height(ctx, pix),
+	fz_pixmap *pix )
