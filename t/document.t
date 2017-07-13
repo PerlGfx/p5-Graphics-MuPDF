@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 
+use Renard::Incunabula::Common::Setup;
 use Test::Most;
 
-use Try::Tiny;
 use Renard::Incunabula::Devel::TestHelper;
 use Renard::Incunabula::MuPDF::Inline;
 
