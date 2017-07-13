@@ -2,14 +2,12 @@
 
 use Test::Most;
 
-use lib 't/lib';
-use MuPDFTestHelper;
-
 use Try::Tiny;
+use Renard::Incunabula::Devel::TestHelper;
 use Renard::Incunabula::MuPDF::Inline;
 
 my $pdf_ref_path = try {
-	MuPDFTestHelper->test_data_directory->child(qw(PDF Adobe pdf_reference_1-7.pdf));
+	Renard::Incunabula::Devel::TestHelper->test_data_directory->child(qw(PDF Adobe pdf_reference_1-7.pdf));
 } catch {
 	plan skip_all => "$_";
 };
