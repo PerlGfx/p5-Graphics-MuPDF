@@ -19,6 +19,12 @@ use Inline C => DATA =>
 
 1;
 
+=head1 SEE ALSO
+
+L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-Incunabula-MuPDF-Inline/>
+
+=cut
+
 __DATA__
 __C__
 

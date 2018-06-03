@@ -10,6 +10,10 @@ Renard::Incunabula::MuPDF::Inline - MuPDF bindings using Inline::C
 
 version 0.001
 
+=head1 SEE ALSO
+
+L<Repository information|http://project-renard.github.io/doc/development/repo/curie/>
+
 =head1 AUTHOR
 
 Project Renard
