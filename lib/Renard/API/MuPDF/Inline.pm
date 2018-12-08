@@ -1,5 +1,5 @@
 use Modern::Perl;
-package Renard::Incunabula::API::MuPDF::Inline;
+package Renard::API::MuPDF::Inline;
 # ABSTRACT: MuPDF bindings using Inline::C
 
 use strict;
@@ -21,7 +21,7 @@ use Inline C => DATA =>
 
 =head1 SEE ALSO
 
-L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-Incunabula-API-MuPDF-Inline/>
+L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-API-MuPDF-Inline/>
 
 =cut
 
