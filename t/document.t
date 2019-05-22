@@ -27,10 +27,10 @@ subtest "Open document" => sub {
 	is( $num_pages, 1310, 'correct number of pages in document' );
 
 	my $matrix = Renard::API::MuPDF::Inline::identity_matrix();
-	use DDP; p $matrix;
+	#use DDP; p $matrix;
 
 	my $pixmap = Renard::API::MuPDF::Inline::render($ctx, $doc, 1, $matrix);
-	use DDP; p $pixmap;
+	#use DDP; p $pixmap;
 
 
 	use Modern::Perl;
@@ -39,7 +39,7 @@ subtest "Open document" => sub {
 
 	my $samples = Renard::API::MuPDF::Inline::pixmap_samples_imager( $ctx, $pixmap );
 	$samples->write( file => "inline-mupdf.png" );
-	use DDP; p $samples;
+	#use DDP; p $samples;
 };
 
 done_testing;
