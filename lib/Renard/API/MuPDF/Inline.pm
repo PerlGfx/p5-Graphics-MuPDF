@@ -10,7 +10,7 @@ use Imager;
 use Dir::Self;
 use File::Spec;
 
-use Inline C => DATA =>
+use Renard::API::MuPDF::Inline::Inline C => DATA =>
 	ccflagsex => "-std=c99",
 	enable => autowrap =>
 	typemaps => File::Spec->catfile(__DIR__, 'typemaps'),
