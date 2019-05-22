@@ -1,0 +1,7 @@
+TYPEMAP
+
+fz_context*  T_PTROBJ
+fz_document* T_PTROBJ
+
+fz_matrix    T_OPAQUE
+fz_pixmap*   T_PTROBJ

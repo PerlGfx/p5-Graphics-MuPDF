@@ -4,11 +4,15 @@
 
 =head1 NAME
 
-Renard::Incunabula::MuPDF::Inline - MuPDF bindings using Inline::C
+Renard::API::MuPDF::Inline - MuPDF bindings using Inline::C
 
 =head1 VERSION
 
 version 0.001
+
+=head1 SEE ALSO
+
+L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-API-MuPDF-Inline/>
 
 =head1 AUTHOR
 
