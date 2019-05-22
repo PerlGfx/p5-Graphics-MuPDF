@@ -81,13 +81,12 @@ MUPDF_WRAP(count_pages, int, -1,
 	ret = fz_count_pages( ctx, doc ),
 	fz_document *doc)
 
-fz_matrix* new_matrix() {
-	fz_matrix* ctm;
-	Newx(ctm, 1, fz_matrix);
+fz_matrix make_matrix(float a, float b, float c, float d, float e, float f) {
+	return fz_make_matrix(a,b,c,d,e,f);
 }
 
-fz_matrix* set_as_identity_matrix(fz_matrix* ctm) {
-	return fz_copy_matrix(ctm, &fz_identity);
+fz_matrix identity_matrix() {
+	return fz_identity;
 }
 
 /* fz_pixmap *fz_new_pixmap_from_page_number(
@@ -101,7 +100,7 @@ MUPDF_WRAP(render, fz_pixmap*, NULL,
 	ret = fz_new_pixmap_from_page_number( ctx, doc, number, ctm, fz_device_rgb(ctx), 0 ),
 	fz_document *doc,
 	int number,
-	fz_matrix *ctm )
+	fz_matrix ctm )
 
 
 /* unsigned char *fz_pixmap_samples(fz_context *ctx, fz_pixmap *pix); */

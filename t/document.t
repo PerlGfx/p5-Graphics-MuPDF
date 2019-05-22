@@ -26,8 +26,7 @@ subtest "Open document" => sub {
 
 	is( $num_pages, 1310, 'correct number of pages in document' );
 
-	my $matrix = Renard::API::MuPDF::Inline::new_matrix();
-	Renard::API::MuPDF::Inline::set_as_identity_matrix($matrix);
+	my $matrix = Renard::API::MuPDF::Inline::identity_matrix();
 	use DDP; p $matrix;
 
 	my $pixmap = Renard::API::MuPDF::Inline::render($ctx, $doc, 1, $matrix);
