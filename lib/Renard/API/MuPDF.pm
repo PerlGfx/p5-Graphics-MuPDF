@@ -1,5 +1,5 @@
 use Modern::Perl;
-package Renard::API::MuPDF::Inline;
+package Renard::API::MuPDF;
 # ABSTRACT: MuPDF bindings using Inline::C
 
 use strict;
@@ -10,10 +10,10 @@ use Imager;
 use Dir::Self;
 use File::Spec;
 
-use Renard::API::MuPDF::Inline::Inline C => DATA =>
+use Renard::API::MuPDF::Inline C => DATA =>
 	ccflagsex => "-std=c99",
 	enable => autowrap =>
-	typemaps => File::Spec->catfile(__DIR__, 'typemaps'),
+	typemaps => File::Spec->catfile(__DIR__, 'MuPDF', 'typemaps'),
 	filters => 'Preprocess',
 	with => [ qw(Alien::MuPDF Imager) ];
 
@@ -21,7 +21,7 @@ use Renard::API::MuPDF::Inline::Inline C => DATA =>
 
 =head1 SEE ALSO
 
-L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-API-MuPDF-Inline/>
+L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-API-MuPDF/>
 
 =cut
 
