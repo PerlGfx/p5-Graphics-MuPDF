@@ -1,0 +1,14 @@
+TYPEMAP
+
+Renard__API__MuPDF__Context*    T_MUPDF_MG
+Renard__API__MuPDF__Document*   T_MUPDF_MG
+Renard__API__MuPDF__Pixmap*     T_MUPDF_MG
+Renard__API__MuPDF__ColorSpace* T_MUPDF_MG
+
+fz_matrix    T_OPAQUE
+
+INPUT
+
+
+
+OUTPUT
