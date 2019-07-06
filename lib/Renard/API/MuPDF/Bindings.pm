@@ -39,6 +39,9 @@ __C__
 	} while(0)
 /* }}} */
 /* Types {{{ */
+STATIC MGVTBL mupdf_mg_vtbl = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+
 typedef enum InternalKind {
 	Context,
 	Document,
@@ -74,6 +77,39 @@ typedef struct {
 		Renard__API__MuPDF__ColorSpace* colorspace;
 	};
 } Renard__API__MuPDF__Internal;
+
+
+void _mupdf_attach_mg( SV* sv, void* ptr ) {
+	sv_magicext (SvRV(sv), NULL, PERL_MAGIC_ext, &mupdf_mg_vtbl,
+		(const char *)ptr, 0);
+}
+
+MAGIC *
+_mupdf_find_mg (SV * sv) {
+	MAGIC *mg;
+
+	if (SvTYPE (sv) < SVt_PVMG)
+		return NULL;
+
+	if ((mg = mg_findext(sv, PERL_MAGIC_ext, &mupdf_mg_vtbl))) {
+		assert (mg->mg_ptr);
+		return mg;
+	}
+
+	return NULL;
+}
+
+Renard__API__MuPDF__Internal*
+mupdf_get_object (SV * sv)
+{
+	MAGIC *mg;
+
+	if (!(mg = _mupdf_find_mg(SvRV (sv))))
+		return NULL;
+
+	return (Renard__API__MuPDF__Internal*) mg->mg_ptr;
+}
+
 /* }}} */
 /* Meta {{{ */
 char* version() {
@@ -103,7 +139,7 @@ void Context_build(SV* self) {
 		croak("Context not created");
 	}
 
-	hv_stores(( HV* )SvRV(self), "_internal", newSViv( PTR2IV(internal) ) );
+	_mupdf_attach_mg(self, internal);
 }
 /* }}} */
 /* Document {{{ */
@@ -111,7 +147,7 @@ void Document_build_path(SV* self, SV* context, const char* path) {
 	fz_context*  ctx;
 	fz_document* doc;
 	Renard__API__MuPDF__Internal* ctx_internal;
-	ctx_internal = INT2PTR(Renard__API__MuPDF__Internal *, SvIV( * hv_fetchs(( HV* )SvRV(context), "_internal", 0) ) );
+	ctx_internal = mupdf_get_object(context);
 	ctx = ctx_internal->context->ctx;
 
 	MUPDF_TRY_CATCH_VOID( ctx,
@@ -124,14 +160,15 @@ void Document_build_path(SV* self, SV* context, const char* path) {
 	Newx(doc_internal->document, 1, Renard__API__MuPDF__Document);
 	doc_internal->document->ctx = ctx;
 	doc_internal->document->doc = doc;
-	hv_stores(( HV* )SvRV(self), "_internal", newSViv( PTR2IV(doc_internal) ) );
+
+	_mupdf_attach_mg(self, doc_internal);
 }
 
 int Document_count_pages(SV* self) {
 	fz_context*  ctx;
 	fz_document* doc;
 	Renard__API__MuPDF__Internal* internal;
-	internal = INT2PTR(Renard__API__MuPDF__Internal *, SvIV( * hv_fetchs(( HV* )SvRV(self), "_internal", 0) ) );
+	internal = mupdf_get_object(self);
 	ctx = internal->document->ctx;
 	doc = internal->document->doc;
 
@@ -147,7 +184,7 @@ int Pixmap_width(SV* self) {
 	fz_context* ctx;
 	fz_pixmap* pix;
 	Renard__API__MuPDF__Internal* internal;
-	internal = INT2PTR(Renard__API__MuPDF__Internal *, SvIV( * hv_fetchs(( HV* )SvRV(self), "_internal", 0) ) );
+	internal = mupdf_get_object(self);
 	ctx = internal->pixmap->ctx;
 	pix = internal->pixmap->pix;
 
@@ -162,7 +199,7 @@ int Pixmap_height(SV* self) {
 	fz_context* ctx;
 	fz_pixmap* pix;
 	Renard__API__MuPDF__Internal* internal;
-	internal = INT2PTR(Renard__API__MuPDF__Internal *, SvIV( * hv_fetchs(( HV* )SvRV(self), "_internal", 0) ) );
+	internal = mupdf_get_object(self);
 	ctx = internal->pixmap->ctx;
 	pix = internal->pixmap->pix;
 
