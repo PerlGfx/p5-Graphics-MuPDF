@@ -143,12 +143,10 @@ void Context_build(SV* self) {
 }
 /* }}} */
 /* Document {{{ */
-void Document_build_path(SV* self, SV* context, const char* path) {
+void Document_build_path(SV* self, Renard__API__MuPDF__Context* context, const char* path) {
 	fz_context*  ctx;
 	fz_document* doc;
-	Renard__API__MuPDF__Internal* ctx_internal;
-	ctx_internal = mupdf_get_object(context);
-	ctx = ctx_internal->context->ctx;
+	ctx = context->ctx;
 
 	MUPDF_TRY_CATCH_VOID( ctx,
 		doc = fz_open_document( ctx, path )
@@ -164,13 +162,11 @@ void Document_build_path(SV* self, SV* context, const char* path) {
 	_mupdf_attach_mg(self, doc_internal);
 }
 
-int Document_count_pages(SV* self) {
+int Document_count_pages(Renard__API__MuPDF__Document* document) {
 	fz_context*  ctx;
 	fz_document* doc;
-	Renard__API__MuPDF__Internal* internal;
-	internal = mupdf_get_object(self);
-	ctx = internal->document->ctx;
-	doc = internal->document->doc;
+	ctx = document->ctx;
+	doc = document->doc;
 
 	int value = -1;
 	MUPDF_TRY_CATCH_VOID( ctx,
@@ -180,13 +176,11 @@ int Document_count_pages(SV* self) {
 }
 /* }}} */
 /* Pixmap {{{ */
-int Pixmap_width(SV* self) {
+int Pixmap_width(Renard__API__MuPDF__Pixmap* pixmap) {
 	fz_context* ctx;
 	fz_pixmap* pix;
-	Renard__API__MuPDF__Internal* internal;
-	internal = mupdf_get_object(self);
-	ctx = internal->pixmap->ctx;
-	pix = internal->pixmap->pix;
+	ctx = pixmap->ctx;
+	pix = pixmap->pix;
 
 	int value = -1;
 	MUPDF_TRY_CATCH_VOID( ctx,
@@ -195,13 +189,11 @@ int Pixmap_width(SV* self) {
 	return value;
 }
 
-int Pixmap_height(SV* self) {
+int Pixmap_height(Renard__API__MuPDF__Pixmap* pixmap) {
 	fz_context* ctx;
 	fz_pixmap* pix;
-	Renard__API__MuPDF__Internal* internal;
-	internal = mupdf_get_object(self);
-	ctx = internal->pixmap->ctx;
-	pix = internal->pixmap->pix;
+	ctx = pixmap->ctx;
+	pix = pixmap->pix;
 
 	int value = -1;
 	MUPDF_TRY_CATCH_VOID( ctx,
