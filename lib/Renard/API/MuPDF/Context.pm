@@ -14,4 +14,8 @@ method open_document($path) {
 	Renard::API::MuPDF::Document->new( context => $self, path => $path);
 }
 
+method DESTROY() {
+	$self->Renard::API::MuPDF::Bindings::Context_DESTROY;
+}
+
 1;

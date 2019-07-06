@@ -140,11 +140,21 @@ void Context_build(SV* self) {
 	fz_catch(ctx) {
 		warn("cannot register document handlers: %s\n", fz_caught_message(ctx));
 		fz_drop_context(ctx);
+		Safefree(internal->context);
+		Safefree(internal);
 		croak("Context not created");
 	}
 
 	_mupdf_attach_mg(self, internal);
 	internal->context->ctx_sv = self;
+}
+
+void Context_DESTROY(SV* self) {
+	Renard__API__MuPDF__Internal* internal = mupdf_get_object(self);
+	if( Context != internal->kind ) croak("Wrong magic: expected Context");
+	fz_drop_context(internal->context->ctx);
+	Safefree(internal->context);
+	Safefree(internal);
 }
 /* }}} */
 /* Document {{{ */
@@ -166,6 +176,15 @@ void Document_build_path(SV* self, Renard__API__MuPDF__Context* context, const c
 	doc_internal->document->ctx_sv = SvREFCNT_inc_simple_NN(context->ctx_sv);
 
 	_mupdf_attach_mg(self, doc_internal);
+}
+
+void Document_DESTROY(SV* self) {
+	Renard__API__MuPDF__Internal* internal = mupdf_get_object(self);
+	if( Document != internal->kind ) croak("Wrong magic: expected Document");
+	SvREFCNT_dec_NN(internal->document->ctx_sv);
+	fz_drop_document(internal->document->ctx, internal->document->doc);
+	Safefree(internal->document);
+	Safefree(internal);
 }
 
 int Document_count_pages(Renard__API__MuPDF__Document* document) {

@@ -13,4 +13,8 @@ method pages() {
 	$self->Renard::API::MuPDF::Bindings::Document_count_pages;
 }
 
+method DESTROY() {
+	$self->Renard::API::MuPDF::Bindings::Document_DESTROY;
+}
+
 1;
