@@ -51,21 +51,25 @@ typedef enum InternalKind {
 
 typedef struct {
 	fz_context* ctx;
+	SV* ctx_sv;
 } Renard__API__MuPDF__Context;
 
 typedef struct {
 	fz_context* ctx;
 	fz_document* doc;
+	SV* ctx_sv;
 } Renard__API__MuPDF__Document;
 
 typedef struct {
 	fz_context* ctx;
 	fz_pixmap* pix;
+	SV* ctx_sv;
 } Renard__API__MuPDF__Pixmap;
 
 typedef struct {
 	fz_context* ctx;
 	fz_colorspace* cs;
+	SV* ctx_sv;
 } Renard__API__MuPDF__ColorSpace;
 
 typedef struct {
@@ -140,6 +144,7 @@ void Context_build(SV* self) {
 	}
 
 	_mupdf_attach_mg(self, internal);
+	internal->context->ctx_sv = self;
 }
 /* }}} */
 /* Document {{{ */
@@ -158,6 +163,7 @@ void Document_build_path(SV* self, Renard__API__MuPDF__Context* context, const c
 	Newx(doc_internal->document, 1, Renard__API__MuPDF__Document);
 	doc_internal->document->ctx = ctx;
 	doc_internal->document->doc = doc;
+	doc_internal->document->ctx_sv = SvREFCNT_inc_simple_NN(context->ctx_sv);
 
 	_mupdf_attach_mg(self, doc_internal);
 }
