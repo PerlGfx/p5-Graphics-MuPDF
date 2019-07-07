@@ -4,10 +4,10 @@ use Test::Most tests => 1;
 use Renard::API::MuPDF;
 
 subtest "Test version function" => sub {
-	like
-		Renard::API::MuPDF::version(),
+	like(
+		Renard::API::MuPDF->version,
 		qr/\d+\.\d+[a-z]*/,
-		'FZ_VERSION is a version string';
+		'FZ_VERSION is a version string');
 };
 
 done_testing;
