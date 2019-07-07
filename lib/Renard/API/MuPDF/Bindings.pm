@@ -337,6 +337,14 @@ void ColorSpace_DESTROY(SV* self) {
 
 /* Integration {{{ */
 /* Imager {{{ */
+bool Integration_Imager_is_enabled() {
+#ifdef HAS_IMAGER
+	return true;
+#else
+	return false;
+#endif /* HAS_IMAGER */
+}
+
 #ifdef HAS_IMAGER
 Imager Integration_Imager_pixmap_samples(Renard__API__MuPDF__Pixmap* pixmap) {
 	fz_pixmap* pix = pixmap->pix;
@@ -354,6 +362,14 @@ Imager Integration_Imager_pixmap_samples(Renard__API__MuPDF__Pixmap* pixmap) {
 #endif /* HAS_IMAGER */
 /* }}} */
 /* Cairo {{{ */
+bool Integration_Cairo_is_enabled() {
+#ifdef HAS_CAIRO
+	return true;
+#else
+	return false;
+#endif /* HAS_CAIRO */
+}
+
 #ifdef HAS_CAIRO
 cairo_surface_t* Integration_Cairo_pixmap_samples(Renard__API__MuPDF__Pixmap* pixmap) {
 	fz_pixmap* pix = pixmap->pix;

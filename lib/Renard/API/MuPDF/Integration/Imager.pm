@@ -7,6 +7,8 @@ use Module::Load;
 
 BEGIN {
 	load 'Imager';
+	die "Integration with Imager not supported"
+		unless Renard::API::MuPDF::Bindings::Integration_Imager_is_enabled();
 }
 
 classmethod to_Imager( $pixmap ) {

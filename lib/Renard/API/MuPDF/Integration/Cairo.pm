@@ -7,6 +7,8 @@ use Module::Load;
 
 BEGIN {
 	load 'Renard::API::Cairo';
+	die "Integration with Cairo not supported"
+		unless Renard::API::MuPDF::Bindings::Integration_Cairo_is_enabled();
 }
 
 classmethod to_Surface( $pixmap ) {
