@@ -21,7 +21,7 @@ BEGIN {
 	try {
 		load 'Cairo';
 		load 'Renard::API::Cairo';
-		$HAS_CAIRO = 1;
+		$HAS_CAIRO = 1 unless $^O eq 'MSWin32';
 	} catch {};
 }
 
