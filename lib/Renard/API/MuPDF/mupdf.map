@@ -5,7 +5,7 @@ Renard__API__MuPDF__Document*   T_MUPDF_MG_DOCUMENT
 Renard__API__MuPDF__Pixmap*     T_MUPDF_MG_PIXMAP
 Renard__API__MuPDF__ColorSpace* T_MUPDF_MG_COLORSPACE
 
-fz_matrix    T_OPAQUE
+fz_matrix    T_MUPDF_MATRIX
 
 INPUT
 
@@ -25,3 +25,11 @@ T_MUPDF_MG_COLORSPACE
 	Renard__API__MuPDF__Internal* ${var}_internal = mupdf_get_object($arg);
 	if( ColorSpace == ${var}_internal->kind ) $var = ${var}_internal->colorspace;
 	else croak(\"$var is not of type $type\")
+
+T_MUPDF_MATRIX
+	$var = *($type *)SvPV_nolen(SvRV($arg))
+
+OUTPUT
+
+T_MUPDF_MATRIX
+	sv_setref_pvn($arg, "Renard::API::MuPDF::Matrix", (char *)&$var, sizeof($var));

@@ -7,10 +7,22 @@ package Renard::API::MuPDF::Bindings;
 use strict;
 use warnings;
 
+use Try::Tiny;
+use Module::Load;
+
+our $HAS_IMAGER = 0;
+our $HAS_CAIRO  = 0;
 BEGIN {
-	require Imager;
-	require Cairo;
-	require Renard::API::Cairo;
+	try {
+		load 'Imager';
+		$HAS_IMAGER = 1;
+	} catch {};
+
+	try {
+		load 'Cairo';
+		load 'Renard::API::Cairo';
+		$HAS_CAIRO = 1;
+	} catch {};
 }
 
 use Alien::MuPDF;
@@ -19,10 +31,18 @@ use File::Spec;
 
 use Renard::API::MuPDF::Bindings::Inline C => DATA =>
 	ccflagsex => "-std=c99",
+	cppflags => join(" ",
+			qw( -DHAS_IMAGER ) x !!($HAS_IMAGER),
+			qw( -DHAS_CAIRO  ) x !!($HAS_CAIRO),
+		),
 	enable => autowrap =>
 	typemaps => File::Spec->catfile(__DIR__, 'mupdf.map'),
 	filters => 'Preprocess',
-	with => [ qw(Alien::MuPDF Imager Renard::API::Cairo) ];
+	with => [
+		qw(Alien::MuPDF),
+		qw(Imager)             x!!($HAS_IMAGER),
+		qw(Renard::API::Cairo) x!!($HAS_CAIRO),
+	];
 
 1;
 __DATA__
@@ -123,11 +143,6 @@ char* version() {
 /* Context {{{ */
 void Context_build(SV* self) {
 	fz_context* ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
-	Renard__API__MuPDF__Internal* internal;
-	Newx(internal, 1, Renard__API__MuPDF__Internal);
-	internal->kind = Context;
-	Newx(internal->context, 1, Renard__API__MuPDF__Context);
-	internal->context->ctx = ctx;
 
 	if( ! ctx ) {
 		croak("Context not created");
@@ -140,10 +155,15 @@ void Context_build(SV* self) {
 	fz_catch(ctx) {
 		warn("cannot register document handlers: %s\n", fz_caught_message(ctx));
 		fz_drop_context(ctx);
-		Safefree(internal->context);
-		Safefree(internal);
 		croak("Context not created");
 	}
+
+
+	Renard__API__MuPDF__Internal* internal;
+	Newx(internal, 1, Renard__API__MuPDF__Internal);
+	internal->kind = Context;
+	Newx(internal->context, 1, Renard__API__MuPDF__Context);
+	internal->context->ctx = ctx;
 
 	_mupdf_attach_mg(self, internal);
 	internal->context->ctx_sv = self;
@@ -159,9 +179,8 @@ void Context_DESTROY(SV* self) {
 /* }}} */
 /* Document {{{ */
 void Document_build_path(SV* self, Renard__API__MuPDF__Context* context, const char* path) {
-	fz_context*  ctx;
+	fz_context*  ctx = context->ctx;
 	fz_document* doc;
-	ctx = context->ctx;
 
 	MUPDF_TRY_CATCH_VOID( ctx,
 		doc = fz_open_document( ctx, path )
@@ -188,10 +207,8 @@ void Document_DESTROY(SV* self) {
 }
 
 int Document_count_pages(Renard__API__MuPDF__Document* document) {
-	fz_context*  ctx;
-	fz_document* doc;
-	ctx = document->ctx;
-	doc = document->doc;
+	fz_context*  ctx = document->ctx;
+	fz_document* doc = document->doc;
 
 	int value = -1;
 	MUPDF_TRY_CATCH_VOID( ctx,
@@ -199,8 +216,43 @@ int Document_count_pages(Renard__API__MuPDF__Document* document) {
 	);
 	return value;
 }
+
+void Document_new_pixmap_from_page_number(Renard__API__MuPDF__Document* document,
+	int number,
+	fz_matrix ctm,
+	Renard__API__MuPDF__ColorSpace* colorspace,
+	int alpha,
+	SV* pixmap ) {
+	fz_context*  ctx = document->ctx;
+	fz_document* doc = document->doc;
+
+	fz_pixmap* pix;
+	MUPDF_TRY_CATCH_VOID( ctx,
+		pix = fz_new_pixmap_from_page_number(
+			ctx, doc, number, ctm, colorspace->cs, alpha
+		)
+	);
+
+	Renard__API__MuPDF__Internal* pix_internal;
+	Newx(pix_internal, 1, Renard__API__MuPDF__Internal);
+	pix_internal->kind = Pixmap;
+	Newx(pix_internal->pixmap, 1, Renard__API__MuPDF__Pixmap);
+	pix_internal->pixmap->ctx = ctx;
+	pix_internal->pixmap->pix = pix;
+	pix_internal->pixmap->ctx_sv = SvREFCNT_inc_simple_NN(document->ctx_sv);
+
+	_mupdf_attach_mg(pixmap, pix_internal);
+}
 /* }}} */
 /* Pixmap {{{ */
+void Pixmap_DESTROY(SV* self) {
+	Renard__API__MuPDF__Internal* internal = mupdf_get_object(self);
+	if( Pixmap != internal->kind ) croak("Wrong magic: expected Pixmap");
+	SvREFCNT_dec_NN(internal->pixmap->ctx_sv);
+	fz_drop_pixmap(internal->pixmap->ctx, internal->pixmap->pix);
+	Safefree(internal->pixmap);
+	Safefree(internal);
+}
 int Pixmap_width(Renard__API__MuPDF__Pixmap* pixmap) {
 	fz_context* ctx;
 	fz_pixmap* pix;
@@ -235,58 +287,107 @@ fz_matrix Matrix_build(float a, float b, float c, float d, float e, float f) {
 fz_matrix Matrix_identity() {
 	return fz_identity;
 }
+
+float Matrix_a(fz_matrix m) { return m.a; }
+float Matrix_b(fz_matrix m) { return m.b; }
+float Matrix_c(fz_matrix m) { return m.c; }
+float Matrix_d(fz_matrix m) { return m.d; }
+float Matrix_e(fz_matrix m) { return m.e; }
+float Matrix_f(fz_matrix m) { return m.f; }
+/* }}} */
+/* ColorSpace {{{ */
+#define MUPDF_COLORSPACE_BUILD_DEVICE(X) \
+	void ColorSpace_build_device_ ## X (SV* self, Renard__API__MuPDF__Context* context) { \
+		fz_context*  ctx = context->ctx; \
+		fz_colorspace* cs; \
+		\
+		MUPDF_TRY_CATCH_VOID( ctx, \
+			cs = fz_device_ ## X( ctx ) \
+		); \
+		\
+		Renard__API__MuPDF__Internal* cs_internal; \
+		Newx(cs_internal, 1, Renard__API__MuPDF__Internal); \
+		cs_internal->kind = ColorSpace; \
+		Newx(cs_internal->colorspace, 1, Renard__API__MuPDF__ColorSpace); \
+		cs_internal->colorspace->ctx = ctx; \
+		cs_internal->colorspace->cs = cs; \
+		cs_internal->colorspace->ctx_sv = SvREFCNT_inc_simple_NN(context->ctx_sv); \
+		\
+		_mupdf_attach_mg(self, cs_internal); \
+	}
+
+MUPDF_COLORSPACE_BUILD_DEVICE(gray)
+MUPDF_COLORSPACE_BUILD_DEVICE(rgb)
+MUPDF_COLORSPACE_BUILD_DEVICE(bgr)
+MUPDF_COLORSPACE_BUILD_DEVICE(cmyk)
+MUPDF_COLORSPACE_BUILD_DEVICE(lab)
+
+
+void ColorSpace_DESTROY(SV* self) {
+	Renard__API__MuPDF__Internal* internal = mupdf_get_object(self);
+	if( ColorSpace != internal->kind ) croak("Wrong magic: expected ColorSpace");
+	SvREFCNT_dec_NN(internal->colorspace->ctx_sv);
+	fz_drop_colorspace(internal->colorspace->ctx, internal->colorspace->cs);
+	Safefree(internal->colorspace);
+	Safefree(internal);
+}
+
+
 /* }}} */
 
-#if 0
-##define MUPDF_WRAP( \
-	#wrapper_fn_name, return_type, failure_value, \
-	#real_fn_call, \
-	#... \
-	#) \
-	#\
-	#return_type wrapper_fn_name( fz_context *ctx, ##__VA_ARGS__ ) { \
-		#return_type ret; \
-		#\
-		#fz_try( ctx ) { \
-			#real_fn_call; \
-		#} fz_catch( ctx ) { \
-			#ret = failure_value; \
-			#croak("%s (%s:%d): %s", __FUNCTION__, __FILE__, __LINE__, fz_caught_message(ctx)); \
-		#} \
-		#\
-		#return ret; \
-	#}
+/* Integration {{{ */
+/* Imager {{{ */
+#ifdef HAS_IMAGER
+Imager Integration_Imager_pixmap_samples(Renard__API__MuPDF__Pixmap* pixmap) {
+	fz_pixmap* pix = pixmap->pix;
+	Imager img = i_img_8_new(pix->w, pix->h, pix->n);
+	for( int line = 0; line < pix->h; line++ ) {
+		i_psamp(img, 0, pix->w, line,
+			pix->samples + (pix->n*line*pix->w),
+			NULL,
+			pix->n);
+	}
+	return img;
+}
+#else
+/* No Imager support */
+#endif /* HAS_IMAGER */
+/* }}} */
+/* Cairo {{{ */
+#ifdef HAS_CAIRO
+cairo_surface_t* Integration_Cairo_pixmap_samples(Renard__API__MuPDF__Pixmap* pixmap) {
+	fz_pixmap* pix = pixmap->pix;
 
+	cairo_format_t format = CAIRO_FORMAT_ARGB32;
 
+	int stride = cairo_format_stride_for_width (format, pix->w);
 
-#/* fz_pixmap *fz_new_pixmap_from_page_number(
-	#fz_context *ctx,
-	#fz_document *doc,
-	#int number,
-	#const fz_matrix *ctm,
-	#fz_colorspace *cs,
-	#int alpha); */
-#MUPDF_WRAP(render, fz_pixmap*, NULL,
-	#ret = fz_new_pixmap_from_page_number( ctx, doc, number, ctm, fz_device_rgb(ctx), 0 ),
-	#fz_document *doc,
-	#int number,
-	#fz_matrix ctm )
+	cairo_surface_t* surface = cairo_image_surface_create(
+		format,
+		pix->w,
+		pix->h);
 
+	unsigned char* s = pix->samples;
+	unsigned char* image_data = cairo_image_surface_get_data(surface);
+	for( int y = 0; y < pix->h; y++ ) {
+		for( int x = 0; x < pix->w; x++ ) {
+			unsigned char* p = image_data + y * stride + x * 4;
+			p[0] = s[2];
+			p[1] = s[1];
+			p[2] = s[0];
+			p[3] = 0xFF;
+			s += 3;
+		}
+	}
 
-#/* unsigned char *fz_pixmap_samples(fz_context *ctx, fz_pixmap *pix); */
-#MUPDF_WRAP(pixmap_samples_imager, Imager, NULL,
-	#Imager img = i_img_8_new(pix->w, pix->h, pix->n);
-	#for( int line = 0; line < pix->h; line++ ) {
-		#i_psamp(img, 0, pix->w, line,
-			#pix->samples + (pix->n*line*pix->w),
-			#NULL,
-			#pix->n);
-	#}
-	#ret = img;
-	#/*Imager ret = i_img_8_new(pix->w, pix->h, pix->n);
-	#printf("%d:%d:%d:%d\n", ret->xsize, ret->ysize, pix->n, ret->bytes);
-	#ret->idata = pix->samples*/
-	#,
-	#fz_pixmap *pix )
+	cairo_surface_mark_dirty(surface);
 
-#endif
+	return surface;
+}
+#else
+/* No Cairo support */
+#endif /* HAS_CAIRO */
+/* }}} */
+
+/* }}} */
+
