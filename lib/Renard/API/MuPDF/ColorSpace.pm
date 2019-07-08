@@ -40,4 +40,3 @@ method DESTROY() {
 }
 
 1;
-
