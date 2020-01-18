@@ -1,0 +1,41 @@
+#ifdef HAS_CAIRO
+
+
+
+cairo_surface_t* Integration_Cairo_pixmap_samples(Renard__API__MuPDF__Pixmap* pixmap)
+CODE:
+	fz_pixmap* pix = pixmap->pix;
+
+	cairo_format_t format = CAIRO_FORMAT_ARGB32;
+
+	int stride = cairo_format_stride_for_width (format, pix->w);
+
+	cairo_surface_t* surface = cairo_image_surface_create(
+		format,
+		pix->w,
+		pix->h);
+
+	unsigned char* s = pix->samples;
+	unsigned char* image_data = cairo_image_surface_get_data(surface);
+	for( int y = 0; y < pix->h; y++ ) {
+		for( int x = 0; x < pix->w; x++ ) {
+			unsigned char* p = image_data + y * stride + x * 4;
+			p[0] = s[2];
+			p[1] = s[1];
+			p[2] = s[0];
+			p[3] = 0xFF;
+			s += 3;
+		}
+	}
+
+	cairo_surface_mark_dirty(surface);
+
+	RETVAL = surface;
+OUTPUT:
+	RETVAL
+
+#else
+
+# /* No Cairo support */
+
+#endif

@@ -2,19 +2,15 @@ use Renard::Incunabula::Common::Setup;
 package Renard::API::MuPDF::Document;
 # ABSTRACT: MuPDF document
 
+use Renard::API::MuPDF;
 use Mu;
-use Renard::API::MuPDF::Bindings;
 
 method BUILD($args) {
-	$self->Renard::API::MuPDF::Bindings::Document_build_path($args->{context}, "" . $args->{path});
+	$self->build_path($args->{context}, "" . $args->{path});
 }
 
 method pages() {
-	$self->Renard::API::MuPDF::Bindings::Document_count_pages;
-}
-
-method DESTROY() {
-	$self->Renard::API::MuPDF::Bindings::Document_DESTROY;
+	$self->count_pages;
 }
 
 1;

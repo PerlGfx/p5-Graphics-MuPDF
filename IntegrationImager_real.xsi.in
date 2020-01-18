@@ -1,0 +1,23 @@
+#ifdef HAS_IMAGER
+
+
+Imager Integration_Imager_pixmap_samples(Renard__API__MuPDF__Pixmap* pixmap)
+CODE:
+	fz_pixmap* pix = pixmap->pix;
+	Imager img = i_img_8_new(pix->w, pix->h, pix->n);
+	for( int line = 0; line < pix->h; line++ ) {
+		i_psamp(img, 0, pix->w, line,
+			pix->samples + (pix->n*line*pix->w),
+			NULL,
+			pix->n);
+	}
+	RETVAL = img;
+OUTPUT:
+	RETVAL
+
+
+#else
+
+# /* No Imager support */
+
+#endif

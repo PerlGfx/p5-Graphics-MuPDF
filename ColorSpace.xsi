@@ -1,0 +1,45 @@
+MODULE = Renard::API::MuPDF                PACKAGE = Renard::API::MuPDF::ColorSpace PREFIX = fz_
+PROTOTYPES: DISABLE
+
+NO_OUTPUT fz_colorspace* interface_ColorSpace_device( SV* self, Renard__API__MuPDF__Context* context)
+C_ARGS:
+	ctx
+INIT:
+	fz_context*  ctx = context->ctx;
+	fz_try( ctx ) {
+INTERFACE:
+	fz_device_gray
+	fz_device_rgb
+	fz_device_bgr
+	fz_device_cmyk
+	fz_device_lab
+POSTCALL:
+	} fz_catch( ctx ) {
+		MUPDF_CROAK(ctx);
+	}
+	fz_colorspace* cs = RETVAL;
+
+	Renard__API__MuPDF__Internal* cs_internal;
+	Newx(cs_internal, 1, Renard__API__MuPDF__Internal);
+	cs_internal->kind = ColorSpace;
+	Newx(cs_internal->colorspace, 1, Renard__API__MuPDF__ColorSpace);
+	cs_internal->colorspace->ctx = ctx;
+	cs_internal->colorspace->cs = cs;
+	cs_internal->colorspace->ctx_sv = SvREFCNT_inc_simple_NN(context->ctx_sv);
+
+	_mupdf_attach_mg(self, cs_internal);
+
+
+
+
+
+void DESTROY(SV* self)
+CODE:
+	Renard__API__MuPDF__Internal* internal = mupdf_get_object(self);
+	if( ColorSpace != internal->kind ) croak("Wrong magic: expected ColorSpace");
+	SvREFCNT_dec_NN(internal->colorspace->ctx_sv);
+	fz_drop_colorspace(internal->colorspace->ctx, internal->colorspace->cs);
+	Safefree(internal->colorspace);
+	Safefree(internal);
+
+

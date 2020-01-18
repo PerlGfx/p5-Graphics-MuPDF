@@ -1,0 +1,74 @@
+MODULE = Renard::API::MuPDF                PACKAGE = Renard::API::MuPDF::Document PREFIX = Document_
+PROTOTYPES: DISABLE
+
+void Document_build_path(SV* self, Renard__API__MuPDF__Context* context, const char* path)
+CODE:
+	fz_context*  ctx = context->ctx;
+	fz_document* doc;
+
+	MUPDF_TRY_CATCH_VOID( ctx,
+		doc = fz_open_document( ctx, path )
+	);
+
+	Renard__API__MuPDF__Internal* doc_internal;
+	Newx(doc_internal, 1, Renard__API__MuPDF__Internal);
+	doc_internal->kind = Document;
+	Newx(doc_internal->document, 1, Renard__API__MuPDF__Document);
+	doc_internal->document->ctx = ctx;
+	doc_internal->document->doc = doc;
+	doc_internal->document->ctx_sv = SvREFCNT_inc_simple_NN(context->ctx_sv);
+
+	_mupdf_attach_mg(self, doc_internal);
+
+
+void Document_DESTROY(SV* self)
+CODE:
+	Renard__API__MuPDF__Internal* internal = mupdf_get_object(self);
+	if( Document != internal->kind ) croak("Wrong magic: expected Document");
+	SvREFCNT_dec_NN(internal->document->ctx_sv);
+	fz_drop_document(internal->document->ctx, internal->document->doc);
+	Safefree(internal->document);
+	Safefree(internal);
+
+
+int Document_count_pages(Renard__API__MuPDF__Document* document)
+CODE:
+	fz_context*  ctx = document->ctx;
+	fz_document* doc = document->doc;
+
+	int value = -1;
+	MUPDF_TRY_CATCH_VOID( ctx,
+		value = fz_count_pages( ctx, doc );
+	);
+	RETVAL = value;
+OUTPUT:
+	RETVAL
+
+
+void Document_new_pixmap_from_page_number(Renard__API__MuPDF__Document* document, \
+	int number, \
+	fz_matrix ctm, \
+	Renard__API__MuPDF__ColorSpace* colorspace, \
+	int alpha, \
+	SV* pixmap )
+CODE:
+	fz_context*  ctx = document->ctx;
+	fz_document* doc = document->doc;
+
+	fz_pixmap* pix;
+	MUPDF_TRY_CATCH_VOID( ctx,
+		pix = fz_new_pixmap_from_page_number(
+			ctx, doc, number, ctm, colorspace->cs, alpha
+		)
+	);
+
+	Renard__API__MuPDF__Internal* pix_internal;
+	Newx(pix_internal, 1, Renard__API__MuPDF__Internal);
+	pix_internal->kind = Pixmap;
+	Newx(pix_internal->pixmap, 1, Renard__API__MuPDF__Pixmap);
+	pix_internal->pixmap->ctx = ctx;
+	pix_internal->pixmap->pix = pix;
+	pix_internal->pixmap->ctx_sv = SvREFCNT_inc_simple_NN(document->ctx_sv);
+
+	_mupdf_attach_mg(pixmap, pix_internal);
+

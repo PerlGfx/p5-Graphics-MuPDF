@@ -1,0 +1,52 @@
+MODULE = Renard::API::MuPDF                PACKAGE = Renard::API::MuPDF::Matrix PREFIX = Matrix_
+PROTOTYPES: DISABLE
+
+fz_matrix Matrix_build(float a, float b, float c, float d, float e, float f)
+CODE:
+	RETVAL = fz_make_matrix(a,b,c,d,e,f);
+OUTPUT:
+	RETVAL
+
+
+fz_matrix Matrix_identity(SV* klass)
+CODE:
+	RETVAL = fz_identity;
+OUTPUT:
+	RETVAL
+
+
+float Matrix_a(fz_matrix m)
+CODE:
+	RETVAL = m.a;
+OUTPUT:
+	RETVAL
+
+float Matrix_b(fz_matrix m)
+CODE:
+	RETVAL = m.b;
+OUTPUT:
+	RETVAL
+
+float Matrix_c(fz_matrix m)
+CODE:
+	RETVAL = m.c;
+OUTPUT:
+	RETVAL
+
+float Matrix_d(fz_matrix m)
+CODE:
+	RETVAL = m.d;
+OUTPUT:
+	RETVAL
+
+float Matrix_e(fz_matrix m)
+CODE:
+	RETVAL = m.e;
+OUTPUT:
+	RETVAL
+
+float Matrix_f(fz_matrix m)
+CODE:
+	RETVAL = m.f;
+OUTPUT:
+	RETVAL
