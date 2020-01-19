@@ -1,0 +1,13 @@
+/* Preprocessor {{{ */
+#define MUPDF_CROAK(_ctx) \
+		croak("%s (%s:%d): %s", __FUNCTION__, __FILE__, __LINE__, fz_caught_message(_ctx))
+
+#define MUPDF_TRY_CATCH_VOID(_ctx, real_fn_call) \
+	do { \
+		fz_try( _ctx ) { \
+			real_fn_call; \
+		} fz_catch( _ctx ) { \
+			MUPDF_CROAK(_ctx); \
+		} \
+	} while(0)
+/* }}} */

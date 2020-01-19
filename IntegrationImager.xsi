@@ -1,0 +1,22 @@
+MODULE = Renard::API::MuPDF                PACKAGE = Renard::API::MuPDF::Integration::Imager PREFIX = Integration_Imager_
+PROTOTYPES: DISABLE
+
+BOOT:
+{
+#ifdef HAS_IMAGER
+	PERL_INITIALIZE_IMAGER_CALLBACKS;
+#endif
+}
+
+
+bool Integration_Imager_is_enabled()
+CODE:
+#ifdef HAS_IMAGER
+	RETVAL = true;
+#else
+	RETVAL = false;
+#endif /* HAS_IMAGER */
+OUTPUT:
+	RETVAL
+
+INCLUDE: IntegrationImager_real.xsi

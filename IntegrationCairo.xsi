@@ -1,0 +1,14 @@
+MODULE = Renard::API::MuPDF                PACKAGE = Renard::API::MuPDF::Integration::Cairo PREFIX = Integration_Cairo_
+PROTOTYPES: DISABLE
+
+bool Integration_Cairo_is_enabled()
+CODE:
+#ifdef HAS_CAIRO
+	RETVAL = true;
+#else
+	RETVAL = false;
+#endif
+OUTPUT:
+	RETVAL
+
+INCLUDE: IntegrationCairo_real.xsi

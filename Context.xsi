@@ -1,0 +1,38 @@
+MODULE = Renard::API::MuPDF                PACKAGE = Renard::API::MuPDF::Context PREFIX = Context_
+PROTOTYPES: DISABLE
+
+void Context__build(SV* self)
+CODE:
+	fz_context* ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
+
+	if( ! ctx ) {
+		croak("Context not created");
+	}
+
+	/* Register the default file types to handle. */
+	fz_try(ctx) {
+		fz_register_document_handlers(ctx);
+	}
+	fz_catch(ctx) {
+		warn("cannot register document handlers: %s\n", fz_caught_message(ctx));
+		fz_drop_context(ctx);
+		croak("Context not created");
+	}
+
+
+	Renard__API__MuPDF__Internal* internal;
+	Newx(internal, 1, Renard__API__MuPDF__Internal);
+	internal->kind = Context;
+	Newx(internal->context, 1, Renard__API__MuPDF__Context);
+	internal->context->ctx = ctx;
+
+	_mupdf_attach_mg(self, internal);
+	internal->context->ctx_sv = self;
+
+void Context_DESTROY(SV* self)
+CODE:
+	Renard__API__MuPDF__Internal* internal = mupdf_get_object(self);
+	if( Context != internal->kind ) croak("Wrong magic: expected Context");
+	fz_drop_context(internal->context->ctx);
+	Safefree(internal->context);
+	Safefree(internal);

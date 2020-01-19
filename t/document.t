@@ -63,7 +63,7 @@ subtest "Open document" => sub {
 		} 'Cairo integration';
 	};
 
-	pass;
+	pass 'Finished document tests';
 };
 
 done_testing;
