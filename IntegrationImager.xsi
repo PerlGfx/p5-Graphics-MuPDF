@@ -1,4 +1,4 @@
-MODULE = Renard::API::MuPDF                PACKAGE = Renard::API::MuPDF::Integration::Imager PREFIX = Integration_Imager_
+MODULE = Intertangle::API::MuPDF                PACKAGE = Intertangle::API::MuPDF::Integration::Imager PREFIX = Integration_Imager_
 PROTOTYPES: DISABLE
 
 BOOT:

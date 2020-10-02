@@ -1,7 +1,7 @@
 #ifdef HAS_IMAGER
 
 
-Imager Integration_Imager_pixmap_samples(Renard__API__MuPDF__Pixmap* pixmap)
+Imager Integration_Imager_pixmap_samples(Intertangle__API__MuPDF__Pixmap* pixmap)
 CODE:
 	fz_pixmap* pix = pixmap->pix;
 	Imager img = i_img_8_new(pix->w, pix->h, pix->n);

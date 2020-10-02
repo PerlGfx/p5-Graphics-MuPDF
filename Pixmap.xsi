@@ -1,16 +1,16 @@
-MODULE = Renard::API::MuPDF                PACKAGE = Renard::API::MuPDF::Pixmap PREFIX = Pixmap_
+MODULE = Intertangle::API::MuPDF                PACKAGE = Intertangle::API::MuPDF::Pixmap PREFIX = Pixmap_
 PROTOTYPES: DISABLE
 
 void Pixmap_DESTROY(SV* self)
 CODE:
-	Renard__API__MuPDF__Internal* internal = mupdf_get_object(self);
+	Intertangle__API__MuPDF__Internal* internal = mupdf_get_object(self);
 	if( Pixmap != internal->kind ) croak("Wrong magic: expected Pixmap");
 	SvREFCNT_dec_NN(internal->pixmap->ctx_sv);
 	fz_drop_pixmap(internal->pixmap->ctx, internal->pixmap->pix);
 	Safefree(internal->pixmap);
 	Safefree(internal);
 
-int Pixmap_width(Renard__API__MuPDF__Pixmap* pixmap)
+int Pixmap_width(Intertangle__API__MuPDF__Pixmap* pixmap)
 CODE:
 	fz_context* ctx;
 	fz_pixmap* pix;
@@ -26,7 +26,7 @@ OUTPUT:
 	RETVAL
 
 
-int Pixmap_height(Renard__API__MuPDF__Pixmap* pixmap)
+int Pixmap_height(Intertangle__API__MuPDF__Pixmap* pixmap)
 CODE:
 	fz_context* ctx;
 	fz_pixmap* pix;

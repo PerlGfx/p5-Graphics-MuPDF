@@ -4,6 +4,6 @@ requires 'Renard::Incunabula',
 requires 'Alien::MuPDF',
 	git => 'https://github.com/project-renard/p5-Alien-MuPDF.git',
 	branch => 'master';
-requires 'Renard::API::Cairo',
-	git => 'https://github.com/project-renard/p5-Renard-API-Cairo.git',
+requires 'Intertangle::API::Cairo',
+	git => 'https://github.com/Intertangle/p5-Intertangle-API-Cairo.git',
 	branch => 'master';

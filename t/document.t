@@ -5,11 +5,11 @@ use Test::Most;
 
 use Module::Load;
 use Renard::Incunabula::Devel::TestHelper;
-use Renard::API::MuPDF;
-use Renard::API::MuPDF::Context;
-use Renard::API::MuPDF::Matrix;
-use Renard::API::MuPDF::ColorSpace;
-use Renard::API::MuPDF::Pixmap;
+use Intertangle::API::MuPDF;
+use Intertangle::API::MuPDF::Context;
+use Intertangle::API::MuPDF::Matrix;
+use Intertangle::API::MuPDF::ColorSpace;
+use Intertangle::API::MuPDF::Pixmap;
 
 my $pdf_ref_path = try {
 	Renard::Incunabula::Devel::TestHelper->test_data_directory->child(qw(PDF Adobe pdf_reference_1-7.pdf));
@@ -20,7 +20,7 @@ my $pdf_ref_path = try {
 plan tests => 1;
 
 subtest "Open document" => sub {
-	my $ctx = Renard::API::MuPDF::Context->new;
+	my $ctx = Intertangle::API::MuPDF::Context->new;
 	my $doc;
 
 	lives_ok {
@@ -31,10 +31,10 @@ subtest "Open document" => sub {
 
 	is( $doc->pages, 1310, 'correct number of pages in document' );
 
-	my $matrix = Renard::API::MuPDF::Matrix->identity;
-	my $rgb = Renard::API::MuPDF::ColorSpace->new( context => $ctx, device => 'rgb' );
+	my $matrix = Intertangle::API::MuPDF::Matrix->identity;
+	my $rgb = Intertangle::API::MuPDF::ColorSpace->new( context => $ctx, device => 'rgb' );
 	my $page = 0;
-	my $pixmap = Renard::API::MuPDF::Pixmap->new_from_page_number(
+	my $pixmap = Intertangle::API::MuPDF::Pixmap->new_from_page_number(
 		document => $doc, page => $page, matrix => $matrix,
 		colorspace => $rgb, alpha => 0,
 	);
@@ -43,21 +43,21 @@ subtest "Open document" => sub {
 	is $pixmap->height, 666, 'page height';
 
 	eval {
-		load 'Renard::API::MuPDF::Integration::Imager';
+		load 'Intertangle::API::MuPDF::Integration::Imager';
 		1;
 	} and do {
 		lives_ok {
-			my $samples = Renard::API::MuPDF::Integration::Imager->to_Imager( $pixmap );
+			my $samples = Intertangle::API::MuPDF::Integration::Imager->to_Imager( $pixmap );
 			$samples->write( file => "imager-mupdf.png" );
 		} 'Imager integration';
 	};
 
 	eval {
-		load 'Renard::API::MuPDF::Integration::Cairo';
+		load 'Intertangle::API::MuPDF::Integration::Cairo';
 		1;
 	} and do {
 		lives_ok {
-			my $surface = Renard::API::MuPDF::Integration::Cairo->to_Surface( $pixmap );
+			my $surface = Intertangle::API::MuPDF::Integration::Cairo->to_Surface( $pixmap );
 			$surface->write_to_png('cairo-mupdf.png');
 			1;
 		} 'Cairo integration';

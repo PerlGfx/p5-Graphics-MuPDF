@@ -1,8 +1,8 @@
 use Renard::Incunabula::Common::Setup;
-package Renard::API::MuPDF::Integration::Imager;
+package Intertangle::API::MuPDF::Integration::Imager;
 # ABSTRACT: Integration with Imager package
 
-use Renard::API::MuPDF;
+use Intertangle::API::MuPDF;
 use Module::Load;
 
 BEGIN {

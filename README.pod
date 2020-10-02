@@ -4,7 +4,7 @@
 
 =head1 NAME
 
-Renard::API::MuPDF - MuPDF bindings using Inline::C
+Intertangle::API::MuPDF - MuPDF bindings using Inline::C
 
 =head1 VERSION
 
@@ -20,15 +20,13 @@ Returns C<Str>.
 
 =head1 SEE ALSO
 
-L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-API-MuPDF/>
-
 =head1 AUTHOR
 
-Project Renard
+Zakariyya Mughal <zmughal@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2017 by Project Renard.
+This software is copyright (c) 2017 by Zakariyya Mughal.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

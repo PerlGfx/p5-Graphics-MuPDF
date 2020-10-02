@@ -37,9 +37,9 @@ $WriteMakefileArgs{CONFIGURE} = sub {
 	eval {
 		die "Skip Cairo integration on MSWin32" if $^O eq 'MSWin32';
 		Module::Load::load('Cairo');
-		Module::Load::load('Renard::API::Cairo');
+		Module::Load::load('Intertangle::API::Cairo');
 		$HAS_CAIRO = 1;
-		my $cairo = Renard::API::Cairo->Inline('C');
+		my $cairo = Intertangle::API::Cairo->Inline('C');
 		$cairo->{INC} = delete $cairo->{CCFLAGSEX};
 		push @inlines, $cairo;
 		push @defines, '-DHAS_CAIRO';
@@ -60,7 +60,7 @@ $WriteMakefileArgs{CONFIGURE} = sub {
 		),
 		MYEXTLIB => $merged->{MYEXTLIB},
 		TYPEMAPS => [
-			'lib/Renard/API/MuPDF/mupdf.map',
+			'lib/Intertangle/API/MuPDF/mupdf.map',
 			@{ $merged->{TYPEMAPS} }
 		],
 		postamble => {

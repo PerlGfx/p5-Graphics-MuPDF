@@ -1,12 +1,12 @@
 use Renard::Incunabula::Common::Setup;
-package Renard::API::MuPDF::Integration::Cairo;
+package Intertangle::API::MuPDF::Integration::Cairo;
 # ABSTRACT: Integration with Cairo package
 
-use Renard::API::MuPDF;
+use Intertangle::API::MuPDF;
 use Module::Load;
 
 BEGIN {
-	load 'Renard::API::Cairo';
+	load 'Intertangle::API::Cairo';
 	die "Integration with Cairo not supported"
 		unless is_enabled();
 }

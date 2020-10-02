@@ -1,8 +1,8 @@
 use Renard::Incunabula::Common::Setup;
-package Renard::API::MuPDF::ColorSpace;
+package Intertangle::API::MuPDF::ColorSpace;
 # ABSTRACT: Color space
 
-use Renard::API::MuPDF;
+use Intertangle::API::MuPDF;
 use Mu;
 
 method BUILD($args) {

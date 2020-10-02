@@ -26,7 +26,7 @@ DEFINE_IMAGER_CALLBACKS;
 
 
 
-MODULE = Renard::API::MuPDF                PACKAGE = Renard::API::MuPDF
+MODULE = Intertangle::API::MuPDF                PACKAGE = Intertangle::API::MuPDF
 PROTOTYPES: DISABLE
 
 char* version(klass)

@@ -2,7 +2,7 @@
 
 
 
-cairo_surface_t* Integration_Cairo_pixmap_samples(Renard__API__MuPDF__Pixmap* pixmap)
+cairo_surface_t* Integration_Cairo_pixmap_samples(Intertangle__API__MuPDF__Pixmap* pixmap)
 CODE:
 	fz_pixmap* pix = pixmap->pix;
 
