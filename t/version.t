@@ -1,11 +1,11 @@
 #!/usr/bin/env perl
 
 use Test::Most tests => 1;
-use Intertangle::API::MuPDF;
+use Graphics::MuPDF;
 
 subtest "Test version function" => sub {
 	like(
-		Intertangle::API::MuPDF->version,
+		Graphics::MuPDF->version,
 		qr/\d+\.\d+[a-z]*/,
 		'FZ_VERSION is a version string');
 };

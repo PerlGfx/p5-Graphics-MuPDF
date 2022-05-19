@@ -1,4 +1,4 @@
-MODULE = Intertangle::API::MuPDF                PACKAGE = Intertangle::API::MuPDF::Integration::Cairo PREFIX = Integration_Cairo_
+MODULE = Graphics::MuPDF                PACKAGE = Graphics::MuPDF::Integration::Cairo PREFIX = Integration_Cairo_
 PROTOTYPES: DISABLE
 
 bool Integration_Cairo_is_enabled()

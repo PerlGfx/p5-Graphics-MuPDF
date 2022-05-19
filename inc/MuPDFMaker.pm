@@ -60,7 +60,7 @@ $WriteMakefileArgs{CONFIGURE} = sub {
 		),
 		MYEXTLIB => $merged->{MYEXTLIB},
 		TYPEMAPS => [
-			'lib/Intertangle/API/MuPDF/mupdf.map',
+			'lib/Graphics/MuPDF/mupdf.map',
 			@{ $merged->{TYPEMAPS} }
 		],
 		postamble => {

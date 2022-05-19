@@ -3,15 +3,15 @@
 use Test::Most tests => 2;
 
 use Renard::Incunabula::Common::Setup;
-use Intertangle::API::MuPDF::Matrix;
+use Graphics::MuPDF::Matrix;
 
 subtest "Identity matrix" => fun() {
-	my $matrix = Intertangle::API::MuPDF::Matrix->identity;
+	my $matrix = Graphics::MuPDF::Matrix->identity;
 	is_deeply [ $matrix->as_List ], [ 1, 0, 0, 1, 0, 0 ];
 };
 
 subtest "New matrix" => fun() {
-	my $matrix = Intertangle::API::MuPDF::Matrix->new( a => 2, d => 4, f => 8 );
+	my $matrix = Graphics::MuPDF::Matrix->new( a => 2, d => 4, f => 8 );
 	is_deeply [ $matrix->as_List ], [ 2, 0, 0, 4, 0, 8 ];
 };
 

@@ -1,28 +1,28 @@
 TYPEMAP
 
-Intertangle__API__MuPDF__Context*    T_MUPDF_MG_CONTEXT
-Intertangle__API__MuPDF__Document*   T_MUPDF_MG_DOCUMENT
-Intertangle__API__MuPDF__Pixmap*     T_MUPDF_MG_PIXMAP
-Intertangle__API__MuPDF__ColorSpace* T_MUPDF_MG_COLORSPACE
+Graphics__MuPDF__Context*    T_MUPDF_MG_CONTEXT
+Graphics__MuPDF__Document*   T_MUPDF_MG_DOCUMENT
+Graphics__MuPDF__Pixmap*     T_MUPDF_MG_PIXMAP
+Graphics__MuPDF__ColorSpace* T_MUPDF_MG_COLORSPACE
 
 fz_matrix    T_MUPDF_MATRIX
 
 INPUT
 
 T_MUPDF_MG_CONTEXT
-	Intertangle__API__MuPDF__Internal* ${var}_internal = mupdf_get_object($arg);
+	Graphics__MuPDF__Internal* ${var}_internal = mupdf_get_object($arg);
 	if( Context == ${var}_internal->kind ) $var = ${var}_internal->context;
 	else croak(\"$var is not of type $type\")
 T_MUPDF_MG_DOCUMENT
-	Intertangle__API__MuPDF__Internal* ${var}_internal = mupdf_get_object($arg);
+	Graphics__MuPDF__Internal* ${var}_internal = mupdf_get_object($arg);
 	if( Document == ${var}_internal->kind ) $var = ${var}_internal->document;
 	else croak(\"$var is not of type $type\")
 T_MUPDF_MG_PIXMAP
-	Intertangle__API__MuPDF__Internal* ${var}_internal = mupdf_get_object($arg);
+	Graphics__MuPDF__Internal* ${var}_internal = mupdf_get_object($arg);
 	if( Pixmap == ${var}_internal->kind ) $var = ${var}_internal->pixmap;
 	else croak(\"$var is not of type $type\")
 T_MUPDF_MG_COLORSPACE
-	Intertangle__API__MuPDF__Internal* ${var}_internal = mupdf_get_object($arg);
+	Graphics__MuPDF__Internal* ${var}_internal = mupdf_get_object($arg);
 	if( ColorSpace == ${var}_internal->kind ) $var = ${var}_internal->colorspace;
 	else croak(\"$var is not of type $type\")
 
@@ -32,4 +32,4 @@ T_MUPDF_MATRIX
 OUTPUT
 
 T_MUPDF_MATRIX
-	sv_setref_pvn($arg, "Intertangle::API::MuPDF::Matrix", (char *)&$var, sizeof($var));
+	sv_setref_pvn($arg, "Graphics::MuPDF::Matrix", (char *)&$var, sizeof($var));

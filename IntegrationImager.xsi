@@ -1,4 +1,4 @@
-MODULE = Intertangle::API::MuPDF                PACKAGE = Intertangle::API::MuPDF::Integration::Imager PREFIX = Integration_Imager_
+MODULE = Graphics::MuPDF                PACKAGE = Graphics::MuPDF::Integration::Imager PREFIX = Integration_Imager_
 PROTOTYPES: DISABLE
 
 BOOT:

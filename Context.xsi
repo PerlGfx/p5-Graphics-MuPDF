@@ -1,4 +1,4 @@
-MODULE = Intertangle::API::MuPDF                PACKAGE = Intertangle::API::MuPDF::Context PREFIX = Context_
+MODULE = Graphics::MuPDF                PACKAGE = Graphics::MuPDF::Context PREFIX = Context_
 PROTOTYPES: DISABLE
 
 void Context__build(SV* self)
@@ -20,10 +20,10 @@ CODE:
 	}
 
 
-	Intertangle__API__MuPDF__Internal* internal;
-	Newx(internal, 1, Intertangle__API__MuPDF__Internal);
+	Graphics__MuPDF__Internal* internal;
+	Newx(internal, 1, Graphics__MuPDF__Internal);
 	internal->kind = Context;
-	Newx(internal->context, 1, Intertangle__API__MuPDF__Context);
+	Newx(internal->context, 1, Graphics__MuPDF__Context);
 	internal->context->ctx = ctx;
 
 	_mupdf_attach_mg(self, internal);
@@ -31,7 +31,7 @@ CODE:
 
 void Context_DESTROY(SV* self)
 CODE:
-	Intertangle__API__MuPDF__Internal* internal = mupdf_get_object(self);
+	Graphics__MuPDF__Internal* internal = mupdf_get_object(self);
 	if( Context != internal->kind ) croak("Wrong magic: expected Context");
 	fz_drop_context(internal->context->ctx);
 	Safefree(internal->context);

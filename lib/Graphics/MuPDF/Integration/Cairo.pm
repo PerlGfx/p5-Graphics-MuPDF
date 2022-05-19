@@ -1,8 +1,8 @@
 use Renard::Incunabula::Common::Setup;
-package Intertangle::API::MuPDF::Integration::Cairo;
+package Graphics::MuPDF::Integration::Cairo;
 # ABSTRACT: Integration with Cairo package
 
-use Intertangle::API::MuPDF;
+use Graphics::MuPDF;
 use Module::Load;
 
 BEGIN {

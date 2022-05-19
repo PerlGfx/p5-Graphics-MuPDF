@@ -1,4 +1,4 @@
-MODULE = Intertangle::API::MuPDF                PACKAGE = Intertangle::API::MuPDF::Matrix PREFIX = Matrix_
+MODULE = Graphics::MuPDF                PACKAGE = Graphics::MuPDF::Matrix PREFIX = Matrix_
 PROTOTYPES: DISABLE
 
 fz_matrix Matrix_build(float a, float b, float c, float d, float e, float f)

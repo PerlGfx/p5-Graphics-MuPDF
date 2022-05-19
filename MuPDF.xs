@@ -26,7 +26,7 @@ DEFINE_IMAGER_CALLBACKS;
 
 
 
-MODULE = Intertangle::API::MuPDF                PACKAGE = Intertangle::API::MuPDF
+MODULE = Graphics::MuPDF                PACKAGE = Graphics::MuPDF
 PROTOTYPES: DISABLE
 
 char* version(klass)

@@ -4,7 +4,7 @@
 
 =head1 NAME
 
-Intertangle::API::MuPDF - MuPDF bindings using Inline::C
+Graphics::MuPDF - MuPDF bindings using Inline::C
 
 =head1 VERSION
 

@@ -1,8 +1,8 @@
 use Renard::Incunabula::Common::Setup;
-package Intertangle::API::MuPDF::Document;
+package Graphics::MuPDF::Document;
 # ABSTRACT: MuPDF document
 
-use Intertangle::API::MuPDF;
+use Graphics::MuPDF;
 use Mu;
 
 method BUILD($args) {

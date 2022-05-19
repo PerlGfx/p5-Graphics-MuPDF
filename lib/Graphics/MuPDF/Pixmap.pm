@@ -1,8 +1,8 @@
 use Renard::Incunabula::Common::Setup;
-package Intertangle::API::MuPDF::Pixmap;
+package Graphics::MuPDF::Pixmap;
 # ABSTRACT: Pixmap
 
-use Intertangle::API::MuPDF;
+use Graphics::MuPDF;
 use Mu;
 
 classmethod new_from_page_number( :$document, :$page, :$matrix, :$colorspace, :$alpha = 0 ) {

@@ -1,5 +1,5 @@
 use Renard::Incunabula::Common::Setup;
-package Intertangle::API::MuPDF;
+package Graphics::MuPDF;
 # ABSTRACT: MuPDF bindings using Inline::C
 
 use Module::Load;
@@ -10,7 +10,7 @@ eval { load 'Cairo' };
 require XSLoader;
 XSLoader::load(
 	__PACKAGE__,
-	$Intertangle::API::MuPDF::{VERSION} ? ${ $Intertangle::API::MuPDF::{VERSION} } : ()
+	$Graphics::MuPDF::{VERSION} ? ${ $Graphics::MuPDF::{VERSION} } : ()
 );
 
 =classmethod version

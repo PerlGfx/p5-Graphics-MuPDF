@@ -1,8 +1,8 @@
 use Renard::Incunabula::Common::Setup;
-package Intertangle::API::MuPDF::Matrix;
+package Graphics::MuPDF::Matrix;
 # ABSTRACT: Matrix
 
-use Intertangle::API::MuPDF;
+use Graphics::MuPDF;
 
 classmethod _build($args) {
 	my %args = %$args;
